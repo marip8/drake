@@ -46,8 +46,8 @@ cat > "$build_root/drake.bazelrc" << EOF
 build --disk_cache=$HOME/.cache/drake-wheel-build/bazel/disk_cache
 build --repository_cache=$HOME/.cache/drake-wheel-build/bazel/repository_cache
 build --repo_env=DRAKE_WHEEL=1
-build --repo_env=SNOPT_PATH=${SNOPT_PATH}
 build --config=packaging
+build --@drake//tools/flags:with_snopt=False
 # See tools/wheel/wheel_builder/macos.py for more on this env variable.
 build --macos_minimum_os="${MACOSX_DEPLOYMENT_TARGET}"
 EOF
@@ -70,6 +70,7 @@ cmake "$git_root" \
     -DWITH_USER_BLAS=OFF \
     -DWITH_USER_LAPACK=OFF \
     -DWITH_USER_ZLIB=OFF \
+    -DWITH_SNOPT=OFF \
     -DDRAKE_INSTALL_JAVA=OFF \
     -DDRAKE_VERSION_OVERRIDE="${DRAKE_VERSION}" \
     -DCMAKE_INSTALL_PREFIX="/tmp/drake-wheel-build/drake-dist" \
