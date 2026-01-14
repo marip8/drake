@@ -121,6 +121,16 @@ class Toppra {
       double s_dot_start = 0, double s_dot_end = 0);
 
   /**
+   * Adds a first order constraint to the optimization
+   * @param x_lower_bound
+   * @param x_upper_bound
+   * @return
+   */
+  Binding<BoundingBoxConstraint> AddFirstOrderConstraint(
+      const Eigen::Ref<const Eigen::VectorXd>& x_lower_bound,
+      const Eigen::Ref<const Eigen::VectorXd>& x_upper_bound);
+
+  /**
    * Adds a velocity limit to all the degrees of freedom in the plant. The
    * limits must be arranged in the same order as the entries in the path.
    * @param lower_limit The lower velocity limit for each degree of freedom.
@@ -267,7 +277,7 @@ class Toppra {
                             ToppraDiscretization discretization =
                                 ToppraDiscretization::kInterpolation);
 
- private:
+private:
   /*
    * Performs the backward pass step of TOPPRA, returning the controllable set,
    * K, at each gridpoint. K(0, i) and K(1, i) contain respectively the lower

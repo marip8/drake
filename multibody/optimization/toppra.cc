@@ -106,6 +106,20 @@ Toppra::Toppra(const Trajectory<double>& path,
   backward_prog_->AddBoundingBoxConstraint(0, 1e16, backward_x_);
 }
 
+Binding<BoundingBoxConstraint> Toppra::AddFirstOrderConstraint(
+    const Eigen::Ref<const Eigen::VectorXd>& x_lower_bound,
+    const Eigen::Ref<const Eigen::VectorXd>& x_upper_bound)
+{
+  const int N = gridpoints_.size() - 1;
+  DRAKE_DEMAND(x_lower_bound.size() == N);
+  DRAKE_DEMAND(x_upper_bound.size() == N);
+
+  auto x_bbox = backward_prog_->AddBoundingBoxConstraint(0, 1, backward_x_);
+  auto bounds = ToppraBoundingBoxConstraint(x_lower_bound, x_upper_bound);
+  x_bounds_.emplace(x_bbox, bounds);
+  return x_bbox;
+}
+
 Binding<BoundingBoxConstraint> Toppra::AddJointVelocityLimit(
     const Eigen::Ref<const Eigen::VectorXd>& lower_limit,
     const Eigen::Ref<const Eigen::VectorXd>& upper_limit) {
@@ -133,10 +147,8 @@ Binding<BoundingBoxConstraint> Toppra::AddJointVelocityLimit(
     x_lower_bound(knot) = std::pow(std::max(sd_min, 0.), 2);
     x_upper_bound(knot) = std::pow(sd_max, 2);
   }
-  auto x_bbox = backward_prog_->AddBoundingBoxConstraint(0, 1, backward_x_);
-  auto bounds = ToppraBoundingBoxConstraint(x_lower_bound, x_upper_bound);
-  x_bounds_.emplace(x_bbox, bounds);
-  return x_bbox;
+
+  return AddFirstOrderConstraint(x_lower_bound, x_upper_bound);
 }
 
 std::pair<Binding<LinearConstraint>, Binding<LinearConstraint>>
@@ -268,10 +280,8 @@ Binding<BoundingBoxConstraint> Toppra::AddFrameVelocityLimit(
     x_lower_bound(knot) = std::pow(std::max(sd_min, 0.), 2);
     x_upper_bound(knot) = std::pow(sd_max, 2);
   }
-  auto x_bbox = backward_prog_->AddBoundingBoxConstraint(0, 1, backward_x_);
-  auto bounds = ToppraBoundingBoxConstraint(x_lower_bound, x_upper_bound);
-  x_bounds_.emplace(x_bbox, bounds);
-  return x_bbox;
+
+  return AddFirstOrderConstraint(x_lower_bound, x_upper_bound);
 }
 
 namespace {
@@ -346,10 +356,8 @@ Binding<BoundingBoxConstraint> Toppra::AddFrameTranslationalSpeedLimit(
       x_upper_bound(knot) = std::numeric_limits<double>::infinity();
     }
   }
-  auto x_bbox = backward_prog_->AddBoundingBoxConstraint(0, 1, backward_x_);
-  auto bounds = ToppraBoundingBoxConstraint(x_lower_bound, x_upper_bound);
-  x_bounds_.emplace(x_bbox, bounds);
-  return x_bbox;
+
+  return AddFirstOrderConstraint(x_lower_bound, x_upper_bound);
 }
 
 std::pair<Binding<LinearConstraint>, Binding<LinearConstraint>>
