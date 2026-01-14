@@ -196,6 +196,8 @@ PYBIND11_MODULE(optimization, m) {
             cls_doc.ctor.doc)
         .def_static("CalcGridPoints", &Class::CalcGridPoints, py::arg("path"),
             py::arg("options"), cls_doc.CalcGridPoints.doc)
+        .def("gridpoints", &Class::gridpoints, py_rvp::reference_internal)
+        .def("path", &Class::path, py_rvp::reference_internal)
         .def("SolvePathParameterization", &Class::SolvePathParameterization,
             py::arg("s_dot_start") = 0, py::arg("s_dot_end") = 0,
             cls_doc.SolvePathParameterization.doc)
@@ -239,7 +241,9 @@ PYBIND11_MODULE(optimization, m) {
             py::arg("constraint_frame"), py::arg("lower_limit"),
             py::arg("upper_limit"),
             py::arg("discretization") = ToppraDiscretization::kInterpolation,
-            cls_doc.AddFrameAccelerationLimit.doc_trajectory);
+            cls_doc.AddFrameAccelerationLimit.doc_trajectory)
+        .def("AddFirstOrderConstraint", &Class::AddFirstOrderConstraint,
+             py::arg("x_lower_bound"), py::arg("x_upper_bound"));
   }
 }
 }  // namespace
