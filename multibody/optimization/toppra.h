@@ -120,6 +120,12 @@ class Toppra {
   std::optional<PiecewisePolynomial<double>> SolvePathParameterization(
       double s_dot_start = 0, double s_dot_end = 0);
 
+  /** Getter for the gridpoints */
+  inline const Eigen::VectorXd& gridpoints() const { return gridpoints_; }
+
+  /** Getter for the path */
+  inline const Trajectory<double>& path() const { return path_; }
+
   /**
    * Adds a first order constraint to the optimization
    * @param x_lower_bound
